@@ -56,9 +56,43 @@ const mostrarMedicos = function () {
   });
 };
 
+const mostrarPacientes = function () {
+  let pacientes = [];
+  let cuerpoTabla = document.getElementById("cuerpo-tabla-pacientes");
+  let localPacientes = localStorage.getItem("pacientes");
+  if (localPacientes) {
+    pacientes = JSON.parse(localPacientes);
+  }
+  pacientes.forEach((paciente) => {
+    let fila = document.createElement("tr");
+    //Para crear celda DOM tiene un metodo que es insertCell()
+    let celdaNombres = fila.insertCell();
+    let celdaApellidos = fila.insertCell();
+    let celdaCedula = fila.insertCell();
+    let celdaEdad = fila.insertCell();
+    let celdaTelefono = fila.insertCell();
+    let celdaEspecialidad = fila.insertCell();
+    let celdaMedico = fila.insertCell();
+
+    celdaNombres.textContent = paciente.nombres;
+    celdaApellidos.textContent = paciente.apellidos;
+    celdaCedula.textContent = paciente.cedula;
+    celdaEdad.textContent = paciente.edad;
+    celdaTelefono.textContent = paciente.telefono;
+    celdaEspecialidad.textContent = paciente.especialidad;
+    celdaMedico.textContent = "Sin asignar";
+
+    cuerpoTabla.appendChild(fila);
+  });
+};
+
 //Unicamente ejecuta la funcion cuando estamos ubicados en listado-medicos.html
 if (window.location.href.endsWith("listado-medicos.html")) {
   mostrarMedicos();
+}
+
+if (window.location.href.endsWith("listado-pacientes.html")) {
+  mostrarPacientes();
 }
 
 //Unicamente ejecuta el addEventListener cuando estamos ubicados en registro-medicos.html
@@ -83,6 +117,7 @@ if (window.location.href.endsWith("registro-medicos.html")) {
       valorTelefono,
       valorEspecialidad
     );
+
     medico.consultorio = valorConsultorio;
     medico.correo = valorCorreo;
 
@@ -96,5 +131,42 @@ if (window.location.href.endsWith("registro-medicos.html")) {
     medicos.push(medico);
     localStorage.setItem("medicos", JSON.stringify(medicos));
     alert("Medico registrado!");
+  });
+}
+
+// Acceso al formulario registro pacientes
+if (window.location.href.endsWith("registro-pacientes.html")) {
+  //El evento para formularioMedicos va a ser de tipo enviar o guardar es decir submit
+  formularioPacientes.addEventListener("submit", function (event) {
+    //Previene que la pagina se recargue sin antes hacer la logica del addEventListener
+    event.preventDefault();
+
+    let valorNombres = nombres.value;
+    let valorApellidos = apellidos.value;
+    let valorCedula = cedula.value;
+    let valorEdad = edad.value;
+    let valorTelefono = telefono.value;
+    let valorEspecialidad = especialidad.value;
+
+    const paciente = new Usuario(
+      valorNombres,
+      valorApellidos,
+      valorCedula,
+      valorTelefono,
+      valorEspecialidad
+    );
+    paciente.edad = valorEdad
+
+    let pacientes = [];
+
+    let localPacientes = localStorage.getItem("pacientes");
+    //Si localPacientes no esta vacio lo convierte en objeto para hacer el push
+    if (localPacientes) {
+      pacientes = JSON.parse(localPacientes);
+    }
+    pacientes.push(paciente);
+    //Guardar la información de pacientes en el localStorage
+    localStorage.setItem("pacientes", JSON.stringify(pacientes));
+    alert("Paciente registrado!");
   });
 }
